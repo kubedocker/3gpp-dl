@@ -22,4 +22,4 @@ jobs:
                   commit-msg: Update Json
                   committer-name: kubedocker
                   committer-email: kubedocker@outlook.com
-                  github-token: ${{ secrets.AUTOMATION_TOKEN }}
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
