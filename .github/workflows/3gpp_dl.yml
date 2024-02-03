@@ -1,0 +1,25 @@
+name: Update 3GPP DL
+
+on:
+  workflow_dispatch:
+
+jobs:
+    resources:
+        name: Update resources
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - uses: actions/setup-node@v4
+
+            - name: Fetch resources
+              run: python3 3gppWatchTower.py
+
+            - name: Update resources
+              uses: test-room-7/action-update-file@v1
+              with:
+                  file-path: dl.json
+                  commit-msg: Update Json
+                  committer-name: kubedocker
+                  committer-email: kubedocker@outlook.com
+                  github-token: ${{ secrets.AUTOMATION_TOKEN }}
