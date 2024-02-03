@@ -9,12 +9,12 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-
             - uses: actions/setup-python@v5
-
+            - run: pip install -r requirements.txt
+            
             - name: Fetch resources
               run: python3 3gppWatchTower.py
-
+              
             - name: Update resources
               uses: test-room-7/action-update-file@v1
               with:
