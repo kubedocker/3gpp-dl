@@ -10,6 +10,9 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
+              with:
+                python-version: '3.10'
+                cache: 'pip'
             - run: pip install -r requirements.txt
             
             - name: Fetch resources
@@ -18,7 +21,7 @@ jobs:
             - run: ls
               
             - name: Update resources
-              uses: test-room-7/action-update-file@v1
+              uses: test-room-7/action-update-file@v1.8.0
               with:
                   file-path: dl.json
                   commit-msg: Update Json
