@@ -1,6 +1,10 @@
 name: Download 3GPP TS
 
 on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'watchtower/dl.json'
   workflow_dispatch:
 
 env:
