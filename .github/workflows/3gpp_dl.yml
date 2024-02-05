@@ -17,8 +17,11 @@ jobs:
           with:
             python-version: '3.10'
             cache: 'pip'
-        - name: Set Working Directory and Install
+        
+        defaults:
           working-directory: watchtower
+
+        - name: Set Working Directory and Install
           run: |
             pip install -r requirements.txt
         
