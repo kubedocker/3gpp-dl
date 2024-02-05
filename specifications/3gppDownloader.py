@@ -86,12 +86,11 @@ if __name__ == '__main__':
     for url in new_index:
         path = generate_path_from_url(url)
         download_and_extract_doc(url, path)
-
-    '''
+    
     with open(index_file, "w") as file:
       json.dump(url_list, file, indent=1)
     print(f"URL stored in {index_file}")
-    '''
+    
     
     
     
