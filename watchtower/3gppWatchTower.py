@@ -47,6 +47,6 @@ if __name__ == '__main__':
     start_url = 'https://www.3gpp.org/ftp/Specs/latest/'
     release_list = sorted(get_all_links(start_url, True), key=custom_sort)
     print(release_list)
-    series_list = {release: get_all_links(start_url + release + '/', True) for release in release_list}
+    series_list = {release: get_all_links(start_url + release + '/', True) for release in release_list[:1]}
     json = generate_json(start_url, series_list)
     generate_file("dl.json", json)
