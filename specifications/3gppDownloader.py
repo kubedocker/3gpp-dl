@@ -3,12 +3,9 @@ import json
 import os
 import shutil
 
-
 from zipfile import ZipFile
 from io import BytesIO
 from urllib.parse import urlparse, unquote
-
-from bs4 import BeautifulSoup
 
 def generate_list(data):
     all_urls = []
@@ -26,43 +23,38 @@ def get_index(index_file):
         return []
 
 
-def download_and_extract_docx(url, download_path='downloaded_files'):
-    # 创建下载目录
-    os.makedirs(download_path, exist_ok=True)
-
-    # 下载文件
-    response = requests.get(url)
-    if response.status_code == 200:
-        # 从响应中获取文件名
-        filename = url.split('/')[-1]
-        file_path = os.path.join(download_path, filename)
-
-        # 将文件保存到本地
-        with open(file_path, 'wb') as file:
-            file.write(response.content)
-
-        # 解压缩文件
-        with ZipFile(file_path, 'r') as zip_ref:
-            # 获取zip文件中的所有文件
-            zip_file_contents = zip_ref.namelist()
-
-            # 筛选出doc和docx文件
-            doc_files = [file for file in zip_file_contents if file.endswith('.doc') or file.endswith('.docx')]
-
-            # 提取doc和docx文件到目标目录
-            for doc_file in doc_files:
-                zip_ref.extract(doc_file, path=download_path)
-
-        print(f"下载并解压成功，提取的doc/docx文件保存在 {download_path}")
-    else:
-        print(f"下载失败，状态码: {response.status_code}")
-
-def download_and_extract_doc(url, download_path):
+def init_path(download_path):
     if os.path.exists(download_path):
         shutil.rmtree(download_path)
         print(f'Deleted existing path: {download_path}')
     
     os.makedirs(download_path)
+
+def download_and_extract_doc(url, download_path):
+    init_path(download_path)
+    response = requests.get(url)
+    if response.status_code == 200:
+        # Extract contents from the zip file in memory
+        with ZipFile(BytesIO(response.content), 'r') as zip_ref:
+            # Filter and keep only .doc and .docx files
+            doc_files = [file for file in zip_ref.namelist() if file.lower().endswith(('.doc', '.docx'))]
+
+            for doc_file in doc_files:
+                file_name, file_extension = os.path.splitext(doc_file)
+                ## Remove version info
+                file_name = file_name[:file_name.rfind('-')] + file_extension
+
+                doc_content = zip_ref.read(doc_file)
+                doc_filepath = os.path.join(download_path, file_name)
+                with open(doc_filepath, 'wb') as doc_file:
+                    doc_file.write(doc_content)
+                
+                print(f"Extracted to: {doc_filepath}")
+
+        print(f"{url} --> {download_path}")
+
+    else:
+        print(f"Download fail: {response.status_code}")
 
 
 def generate_path_from_url(url):
@@ -93,10 +85,7 @@ if __name__ == '__main__':
     print("Find updated index:")
     for url in new_index:
         path = generate_path_from_url(url)
-        print(f"{url} --> {path}")
         download_and_extract_doc(url, path)
-
-    
 
     '''
     with open(index_file, "w") as file:
