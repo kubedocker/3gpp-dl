@@ -9,6 +9,10 @@ jobs:
   install:
     name: Install env
     runs-on: ubuntu-latest
+    defaults:
+      # working-directory only work for 'run' step
+      run:
+        working-directory: watchtower
     steps:
         - uses: actions/checkout@v4
           with:
@@ -17,26 +21,18 @@ jobs:
           with:
             python-version: '3.10'
             cache: 'pip'
-        - run: pwd
-  update:
-    name: Update resources
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: watchtower
-    steps:
-      - name: Set Working Directory and Install
-        run: |
-          pip install -r requirements.txt
-      
-      - name: Fetch resources
-        run: python3 3gppWatchTower.py
+            
+        - name: Set Working Directory and Install
+          run: pip install -r requirements.txt
         
-      - name: Update resources
-        uses: test-room-7/action-update-file@v1.8.0
-        with:
-            file-path: dl.json
-            commit-msg: Update Json
-            committer-name: kubedocker
-            committer-email: kubedocker@outlook.com
-            github-token: ${{ secrets.DL_TOKEN }}
+        - name: Fetch resources
+          run: python3 3gppWatchTower.py
+          
+        - name: Update resources
+          uses: test-room-7/action-update-file@v1.8.0
+          with:
+              file-path: watchtower/*.json
+              commit-msg: Update Json
+              committer-name: kubedocker
+              committer-email: kubedocker@outlook.com
+              github-token: ${{ secrets.DL_TOKEN }}
